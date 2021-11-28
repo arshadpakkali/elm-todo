@@ -5,6 +5,7 @@ import Element exposing (..)
 import Element.Background as Background
 import Element.Border as Border
 import Element.Input as Input
+import Hotkeys exposing (onEnter)
 import Html exposing (Html)
 
 
@@ -71,8 +72,17 @@ elementView model =
 container : Model -> Element Msg
 container model =
     column [ centerX, centerY, spacing 5 ]
-        [ todoInput model
+        [ header
+        , todoInput model
         , todos model
+        ]
+
+
+header : Element msg
+header =
+    column [ centerX ]
+        [ paragraph []
+            [ text "Simple Todo List" ]
         ]
 
 
@@ -80,7 +90,12 @@ todos : Model -> Element Msg
 todos model =
     column [ Border.color color.lightGrey, Border.width 1 ]
         (List.map
-            (\x -> row [] [ paragraph [ padding 10 ] [ text x ], Input.button buttonAttrs { onPress = Just (DeleteTodo x), label = text " - " } ])
+            (\x ->
+                row []
+                    [ paragraph [ padding 10 ] [ text x ]
+                    , Input.button buttonAttrs { onPress = Just (DeleteTodo x), label = text " - " }
+                    ]
+            )
             model.todos
         )
 
@@ -88,7 +103,7 @@ todos model =
 todoInput : Model -> Element Msg
 todoInput model =
     row [ padding 25, spacing 5, Border.width 1, Border.rounded 10, Border.color color.lightBlue ]
-        [ Input.text [ padding 5 ]
+        [ Input.text [ padding 5, Element.htmlAttribute <| onEnter AddTodo ]
             { onChange = InputChange
             , text = model.todoInput
             , placeholder = Just <| Input.placeholder [] <| text "Task name"
