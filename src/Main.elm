@@ -7,6 +7,9 @@ import Element.Border as Border
 import Element.Input as Input
 import Hotkeys exposing (onEnter)
 import Html exposing (Html)
+import Material.Button as MButton
+import Random exposing (..)
+import UUID exposing (..)
 
 
 main : Program () Model Msg
@@ -109,10 +112,16 @@ todoInput model =
             , placeholder = Just <| Input.placeholder [] <| text "Task name"
             , label = Input.labelHidden "hidden"
             }
-        , Input.button [ padding 5, Border.width 1, Border.color color.blue, Background.color color.lightBlue ]
-            { onPress = Just AddTodo
-            , label = text " + "
-            }
+        , MButton.outlined
+            (MButton.config |> MButton.setOnClick AddTodo)
+            " + "
+            |> Element.html
+            |> el [ padding 5 ]
+
+        -- , Input.button [ padding 5, Border.width 1, Border.color color.blue, Background.color color.lightBlue ]
+        --     { onPress = Just AddTodo
+        --     , label = text " + "
+        --     }
         ]
 
 
@@ -129,3 +138,10 @@ color =
     , lightGrey = rgb255 0xE0 0xE0 0xE0
     , white = rgb255 0xFF 0xFF 0xFF
     }
+
+
+uuidV4 : String
+uuidV4 =
+    Random.step UUID.generator (Random.initialSeed 12345)
+        |> Tuple.first
+        |> UUID.toRepresentation Urn
